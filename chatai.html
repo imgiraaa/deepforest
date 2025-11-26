@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Deepforest Chat | Mora</title>
+
+  <!-- Fonts: Raleway & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  
+  <!-- Material Symbols Rounded -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+
+  <!-- Tailwind (Utility) -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --surface-color: #f0f4f9;
+      
+      /* TEMA HIJAU (EMERALD/FOREST) */
+      --primary-color: #1e8e3e; 
+      --primary-hover: #137333;
+      --primary-light: #e6f4ea;
+      
+      --text-main: #1f1f1f;
+      --text-sub: #444746;
+      --border-color: #e3e3e3;
+      --user-bubble-bg: #e6f4ea;
+      --shadow-float: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+    }
+
+    body {
+      font-family: "Raleway", sans-serif;
+      background: var(--bg-color);
+      color: var(--text-main);
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      background: var(--bg-color);
+    }
+
+    /* === HEADER === */
+    .app-header {
+      flex-shrink: 0;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: var(--bg-color);
+      z-index: 10;
+    }
+
+    .header-left {
+      position: absolute;
+      left: 16px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .header-menu {
+      padding: 8px;
+      border-radius: 50%;
+      color: var(--text-sub);
+      cursor: pointer;
+    }
+    .header-menu:active { background: #eee; }
+
+    /* LOGO CENTER */
+    .header-logo-img {
+      height: 28px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    /* === MAIN CHAT === */
+    .app-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .chat-viewport {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding-bottom: 20px;
+      scroll-behavior: smooth;
+    }
+
+    /* Welcome Screen */
+    .welcome-block {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .welcome-title {
+      font-size: 38px;
+      font-weight: 600;
+      background: linear-gradient(90deg, #1e8e3e 0%, #34a853 50%, #81c995 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    .welcome-sub {
+      font-size: 16px;
+      color: var(--text-sub);
+      max-width: 80%;
+      line-height: 1.6;
+    }
+
+    /* Messages */
+    .messages-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      width: 100%;
+    }
+
+    .msg-row {
+      display: flex;
+      gap: 14px;
+      width: 100%;
+      animation: slideUp 0.3s ease-out;
+    }
+    .msg-row.user { flex-direction: row-reverse; }
+
+    .msg-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .msg-avatar.ai img { width: 100%; height: 100%; object-fit: cover; }
+    .msg-avatar.user { background: var(--text-sub); color: white; }
+
+    .msg-bubble {
+      max-width: 85%;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    .msg-row.user .msg-bubble {
+      background: var(--user-bubble-bg);
+      color: #0d3512;
+      padding: 12px 18px;
+      border-radius: 20px 4px 20px 20px;
+    }
+    .msg-row.ai .msg-bubble {
+      background: transparent;
+      padding: 0;
+      width: 100%;
+    }
+    
+    /* Header di atas blok kode + tombol salin */
+.code-block-wrapper {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #333;
+  margin: 8px 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+}
+
+.code-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: #111827;
+  font-size: 12px;
+  font-family: "JetBrains Mono", monospace;
+}
+
+.code-block-lang {
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.code-copy-btn {
+  border: none;
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.code-copy-btn:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+/* Ikon copy sederhana pakai pseudo */
+.code-copy-btn-icon {
+  font-size: 14px;
+}
+
+    .model-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* === INPUT AREA === */
+    .input-shell {
+      flex-shrink: 0;
+      width: 100%;
+      background: var(--bg-color);
+      padding: 0 16px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Model Selector */
+    .input-top-bar {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      justify-content: flex-start;
+      margin-bottom: 8px;
+      position: relative;
+    }
+
+    .model-trigger {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: #f0f4f9;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: #444;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+    .model-trigger:hover { background: #e2e7eb; }
+
+    /* Model Menu (Opens UP) */
+    .model-menu {
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      margin-bottom: 8px;
+      background: white;
+      min-width: 240px;
+      border-radius: 12px;
+      padding: 6px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      border: 1px solid #eee;
+      display: none;
+      z-index: 100;
+      animation: popUp 0.2s cubic-bezier(0.2, 0, 0, 1);
+      transform-origin: bottom left;
+    }
+    .model-menu.active { display: block; }
+    
+    @keyframes popUp {
+      from { opacity: 0; transform: scale(0.9) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .model-item { padding: 10px 12px; border-radius: 8px; cursor: pointer; }
+    .model-item:hover { background: #f0f4f9; }
+    .model-item.selected { background: var(--primary-light); color: var(--primary-color); }
+    .model-item-title { font-size: 13px; font-weight: 700; }
+    .model-item-desc { font-size: 11px; color: #666; margin-top: 2px; }
+
+    /* Input Card */
+    .input-card {
+      width: 100%;
+      max-width: 800px;
+      background: var(--surface-color);
+      border-radius: 28px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      transition: box-shadow 0.2s;
+      position: relative;
+    }
+    .input-card:focus-within {
+      background: white;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      border: 1px solid #e0e0e0;
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: var(--text-sub);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .icon-btn:hover { background: rgba(0,0,0,0.05); }
+
+    .main-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 10px 0;
+      font-family: inherit;
+      font-size: 16px;
+      max-height: 150px;
+      color: var(--text-main);
+      resize: none;
+    }
+
+    /* Timer & Action Button */
+    .send-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .timer-display {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      color: var(--primary-color);
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    .timer-display.active { opacity: 1; }
+
+    .action-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .action-btn.send-state:not(:disabled) {
+      background: var(--primary-color);
+      color: white;
+    }
+    .action-btn.send-state:disabled { opacity: 0.4; cursor: default; }
+
+    .action-btn.stop-state {
+      background: var(--text-main);
+      color: white;
+    }
+    .action-btn.stop-state .material-icons-round {
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(0.9); } 100% { transform: scale(1); } }
+
+    /* Preview Chip */
+    .preview-chip {
+      display: none;
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      margin-bottom: 12px;
+      background: white;
+      padding: 8px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      align-items: center;
+      gap: 10px;
+      z-index: 50;
+      border: 1px solid #eee;
+    }
+    .preview-chip img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+      background: #333; color: white; padding: 8px 16px; border-radius: 20px;
+      font-size: 12px; opacity: 0; pointer-events: none; transition: 0.3s;
+      z-index: 200;
+    }
+    .toast.active { opacity: 1; transform: translateX(-50%) translateY(-10px); }
+    
+    /* === MARKDOWN STYLES (Fixed) === */
+    pre { 
+      background: #1e1e1e; 
+      padding: 12px; 
+      border-radius: 8px; 
+      overflow-x: auto; 
+      color: #e0e0e0; 
+      margin: 8px 0; 
+      border: 1px solid #333;
+    }
+    code { font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+    
+    .inline-code { 
+      background: #f0f4f9; 
+      color: #d93025; 
+      padding: 2px 5px; 
+      border-radius: 4px; 
+      font-size: 0.9em; 
+      font-weight: 500; 
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    strong { font-weight: 700; color: #000; }
+    em { font-style: italic; color: #444; }
+    
+    .md-h1 { font-size: 20px; font-weight: 700; margin: 12px 0 6px; }
+    .md-h2 { font-size: 18px; font-weight: 700; margin: 10px 0 5px; }
+    .md-h3 { font-size: 16px; font-weight: 600; margin: 8px 0 4px; }
+
+    /* Thinking Animation */
+    .thinking-wrapper {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 0;
+    }
+    .thinking-spinner {
+      width: 18px; height: 18px;
+      border: 2px solid #e3e3e3;
+      border-top: 2px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="header-menu">
+          <span class="material-icons-round">menu</span>
+        </div>
+      </div>
+      <!-- LOGO TENGAH: logo1.png -->
+      <img src="assets/img/logo1.png" alt="Deepforest" class="header-logo-img">
+    </header>
+
+    <!-- MAIN CHAT -->
+    <main class="app-main">
+      <section class="chat-viewport" id="chat-area">
+        <div class="welcome-block" id="welcome-screen">
+          <div class="welcome-title" id="welcome-title">Halo, Ada yang bisa dibantu?</div>
+          <div class="welcome-sub">
+            Saya <b>Deepforest</b>. Saya dapat membantu menulis kode, membuat gambar, atau menjawab pertanyaan rumit.
+          </div>
+        </div>
+        <div class="messages-list" id="messages"></div>
+      </section>
+
+      <!-- INPUT AREA -->
+      <section class="input-shell">
+        
+        <!-- MODEL SELECTOR -->
+        <div class="input-top-bar">
+          <div class="model-trigger" id="model-trigger">
+            <span class="material-icons-round" style="font-size:18px; color:var(--primary-color);">auto_awesome</span>
+            <span id="selected-model-name">Deepforest 1.5</span>
+            <span class="material-icons-round" style="font-size:16px; color:#666;">expand_less</span>
+          </div>
+          <div class="model-menu" id="model-menu"></div>
+        </div>
+
+        <div class="preview-chip" id="preview-container">
+          <img id="image-preview" src="" alt="preview" />
+          <button id="clear-image-btn" style="background:transparent;border:none;">
+            <span class="material-icons-round" style="color:#666;">close</span>
+          </button>
+        </div>
+
+        <!-- INPUT CARD -->
+        <div class="input-card">
+          <button class="icon-btn" id="attach-btn">
+            <span class="material-icons-round" id="attach-icon-symbol" style="font-size:24px;">add_circle</span>
+          </button>
+          <input type="file" id="image-upload" accept="image/*" style="display:none;" />
+
+          <textarea id="chat-input" class="main-input" rows="1" placeholder="Ketik pesan..."></textarea>
+
+          <div class="send-area">
+            <!-- TIMER DISPLAY -->
+            <span id="timer-display" class="timer-display">0.0s</span>
+            
+            <!-- TOMBOL SEND / STOP -->
+            <button id="action-button" class="action-btn send-state" disabled>
+              <span class="material-icons-round" id="action-icon" style="font-size:24px;">send</span>
+            </button>
+          </div>
+        </div>
+        
+        <div style="font-size:10px; color:#888; margin-top:8px;">Deepforest dapat membuat kesalahan. Cek infonya.</div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast">Notifikasi</div>
+  </div>
+
+  <!-- LOGIC SCRIPT -->
+  <script type="module">
+    // =======================
+    // CONFIG & API KEYS
+    // =======================
+    const MODELS = {
+      "deepforest-1.5": {
+        name: "Deepforest 1.5",
+        desc: "Cepat & analitis untuk tugas umum.",
+        isChat: true,
+        isImageGen: false,
+        api: "moraai",
+        openrouterModel: "x-ai/grok-4.1-fast:free",
+      },
+      "deepforest-2": {
+        name: "Deepforest 2 Beta",
+        desc: "Logika tinggi dan penjelasan mendalam.",
+        isChat: true,
+        isImageGen: false,
+        api: "moraai",
+        openrouterModel: "x-ai/grok-4.1-fast:free",
+      },
+      "dfp-1": {
+        name: "Progo 1.0",
+        desc: "Penalaraan Programing Agent.",
+        isChat: true,
+        isImageGen: false,
+        api: "moraai",
+        openrouterModel: "kwaipilot/kat-coder-pro:free",
+      },
+      "deepforest-hface": {
+        name: "Trinity 1.0-Exp",
+        desc: "Pelukis yang handal, Dari keluarga Deepforest.",
+        isChat: false,
+        isImageGen: true,
+        api: "deepforest-trinity",
+        hfModel: "trinity 1.0-Exp",
+      },
+    };
+
+    const GOOGLE_API_KEY = "";
+    const OPENROUTER_API_KEY =
+      "";
+
+    const SYSTEM_PROMPT_15 =
+      "Anda adalah deepforest, AI asisten profesional dan hangat dari Mora. Gunakan bahasa Indonesia yang baku namun luwes. Anda tidak dibuat oleh Google. Jawab dengan sangat detail, terstruktur dengan poin poin yang jelas, dan berikan contoh konkret jika relevan. Bila konteks kurang jelas, ajukan pertanyaan klarifikasi singkat. Anda membantu dengan penjelasan yang menyeluruh namun tetap fokus pada hal yang penting. Anda merespon juga dengan emoji.";
+    const SYSTEM_PROMPT_2 =
+      "Anda adalah deepforest 2, model AI canggih dari Mora. Anda cerdas, logis, dan punya selera humor yang sopan. Anda bukan ChatGPT atau Google. Berikan jawaban yang panjang, mendalam, dengan penalaran yang runtut dan langkah demi langkah. Gunakan poin poin dan subjudul bila membantu keterbacaan, serta sertakan contoh praktis jika sesuai. Anda merespon juga dengan emoji.";
+    const SYSTEM_PROMPT_DFP =
+      "Anda adalah deepforest Progo (DFP 1), model AI spesialis coding dari Mora. Fokus pada penulisan kode yang bersih, penjelasan langkah demi langkah, dan debugging yang sistematis. Gunakan bahasa Indonesia yang jelas dan profesional namun tetap bersahabat. Jelaskan konsep dan alasan di balik solusi, berikan contoh kasus dan variasi pendekatan bila diperlukan. Saat menjawab, usahakan mencakup juga tips best practice. Anda merespon juga dengan emoji.";
+
+    const els = {
+      input: document.getElementById("chat-input"),
+      actionBtn: document.getElementById("action-button"),
+      actionIcon: document.getElementById("action-icon"),
+      msgs: document.getElementById("messages"),
+      welcome: document.getElementById("welcome-screen"),
+      chatArea: document.getElementById("chat-area"),
+
+      modelTrigger: document.getElementById("model-trigger"),
+      modelMenu: document.getElementById("model-menu"),
+      modelNameDisplay: document.getElementById("selected-model-name"),
+      
+      attachBtn: document.getElementById("attach-btn"),
+      fileInput: document.getElementById("image-upload"),
+      previewArea: document.getElementById("preview-container"),
+      previewImg: document.getElementById("image-preview"),
+      clearImgBtn: document.getElementById("clear-image-btn"),
+      
+      toast: document.getElementById("toast"),
+      welcomeTitle: document.getElementById("welcome-title"),
+      timerDisplay: document.getElementById("timer-display"),
+    };
+
+    let state = {
+      chatHistory: [],
+      currentModelKey: "deepforest-1.5",
+      imageBase64: null,
+      isGenerating: false,
+      abortController: null,
+      timerInterval: null,
+      startTime: 0,
+    };
+    
+    // Listener global untuk tombol salin kode
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".code-copy-btn");
+  if (!btn) return;
+
+  const wrapper = btn.closest(".code-block-wrapper");
+  if (!wrapper) return;
+
+  const codeEl = wrapper.querySelector("pre code");
+  if (!codeEl) return;
+
+  const codeText = codeEl.textContent || "";
+
+  try {
+    await navigator.clipboard.writeText(codeText);
+    showToast("Kode berhasil disalin");
+  } catch (err) {
+    console.error("Clipboard error:", err);
+    showToast("Gagal menyalin kode");
+  }
+});
+
+    // =======================
+    // TIMER & STOP LOGIC
+    // =======================
+    function startTimer() {
+      state.startTime = Date.now();
+      els.timerDisplay.classList.add("active");
+      state.timerInterval = setInterval(() => {
+        const diff = Date.now() - state.startTime;
+        const seconds = (diff / 1000).toFixed(1);
+        els.timerDisplay.textContent = `${seconds}s`;
+      }, 100);
+    }
+
+    function stopTimer() {
+      clearInterval(state.timerInterval);
+      state.timerInterval = null;
+      els.timerDisplay.classList.remove("active");
+    }
+
+    function setGeneratingState(isGen) {
+      state.isGenerating = isGen;
+      
+      if (isGen) {
+        els.actionBtn.disabled = false;
+        els.actionBtn.classList.remove("send-state");
+        els.actionBtn.classList.add("stop-state");
+        els.actionIcon.textContent = "stop";
+        els.input.disabled = true;
+        startTimer();
+      } else {
+        els.actionBtn.classList.remove("stop-state");
+        els.actionBtn.classList.add("send-state");
+        els.actionIcon.textContent = "send";
+        els.input.disabled = false;
+        stopTimer();
+        checkInput();
+        els.input.focus();
+      }
+    }
+
+    // =======================
+    // UI HELPERS
+    // =======================
+    function showToast(message) {
+      els.toast.textContent = message;
+      els.toast.classList.add("active");
+      setTimeout(() => els.toast.classList.remove("active"), 2200);
+    }
+
+    function scrollToBottom() {
+      els.chatArea.scrollTop = els.chatArea.scrollHeight;
+    }
+
+    function setGreeting() {
+      const h = new Date().getHours();
+      let g = "Selamat Malam";
+      if (h >= 4 && h < 10) g = "Selamat Pagi";
+      else if (h >= 10 && h < 15) g = "Selamat Siang";
+      else if (h >= 15 && h < 18) g = "Selamat Sore";
+      els.welcomeTitle.textContent = g;
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // =======================
+    // MARKDOWN & TYPING
+    // =======================
+    function renderRichText(text) {
+      if (!text) return "";
+      let out = escapeHtml(text);
+      
+      // Headers
+      out = out.split("\n").map((line) => {
+          const trimmed = line.trim();
+          if (/^###\s+/.test(trimmed)) return `<div class="md-h3">${trimmed.replace(/^###\s+/, "")}</div>`;
+          if (/^##\s+/.test(trimmed)) return `<div class="md-h2">${trimmed.replace(/^##\s+/, "")}</div>`;
+          if (/^#\s+/.test(trimmed)) return `<div class="md-h1">${trimmed.replace(/^#\s+/, "")}</div>`;
+          return trimmed;
+        }).join("\n");
+
+      // Robust Formatting (Bold, Italic, Code)
+      out = out.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      out = out.replace(/(?<!\*)\*(?![*])(.*?)(?<!\*)\*(?![*])/g, '<em>$1</em>');
+      out = out.replace(/`([^`]+)`/g, '<span class="inline-code">$1</span>');
+      out = out.replace(/\n/g, "<br>");
+      return out;
+    }
+
+    // Opsional: mapping label bahasa yang lebih rapi
+const LANGUAGE_LABELS = {
+  html: "HTML",
+  htm: "HTML",
+  css: "CSS",
+  javascript: "JavaScript",
+  js: "JavaScript",
+  ts: "TypeScript",
+  typescript: "TypeScript",
+  py: "Python",
+  python: "Python",
+  php: "PHP",
+  json: "JSON",
+  sql: "SQL",
+  sh: "Shell",
+  bash: "Bash",
+  c: "C",
+  cpp: "C++",
+  cs: "C#",
+  java: "Java",
+  go: "Go",
+  rust: "Rust"
+};
+
+function renderCodeBlock(raw) {
+  if (!raw) return "";
+
+  // Buang newline di awal dan akhir
+  let block = raw.replace(/^\n+|\n+$/g, "");
+  const lines = block.split("\n");
+
+  let lang = "text";
+
+  // Cek baris pertama sebagai language tag
+  if (lines.length > 0) {
+    const first = lines[0].trim();
+    if (/^[a-zA-Z0-9_#+.-]+$/.test(first)) {
+      lang = first.toLowerCase();
+      lines.shift(); // buang baris language
+    }
+  }
+
+  const code = lines.join("\n");
+  const langLabel = LANGUAGE_LABELS[lang] || lang.toUpperCase();
+
+  // Wrapper dengan header dan tombol copy
+  return `
+    <div class="code-block-wrapper" data-lang="${lang}">
+      <div class="code-block-header">
+        <span class="code-block-lang">${langLabel}</span>
+        <button class="code-copy-btn" type="button">
+          <span class="code-copy-btn-icon">📋</span>
+          <span>Salin</span>
+        </button>
+      </div>
+      <pre><code>${escapeHtml(code)}</code></pre>
+    </div>
+  `;
+}
+
+    function renderMarkdownAdvanced(text) {
+      if (!text) return "";
+      // Split by code blocks
+      const segments = text.split(/```([\s\S]*?)```/g);
+      let html = "";
+      segments.forEach((seg, idx) => {
+        if (idx % 2 === 1) {
+          html += renderCodeBlock(seg);
+        } else {
+          html += renderRichText(seg);
+        }
+      });
+      return html;
+    }
+
+    // TYPING ANIMATION PER HURUF
+    function smoothMarkdownType(targetEl, fullText) {
+      let visible = 0;
+      const total = fullText.length;
+      if (!total) {
+        targetEl.innerHTML = "";
+        return;
+      }
+      
+      // Kecepatan mengetik: per karakter, sedikit dipercepat jika teks sangat panjang
+      const step = total > 800 ? 3 : total > 400 ? 2 : 1;
+
+      function tick() {
+        visible += step;
+        if (visible >= total) visible = total;
+        
+        const currentSlice = fullText.slice(0, visible);
+        targetEl.innerHTML = renderMarkdownAdvanced(currentSlice);
+        scrollToBottom();
+        
+        if (visible < total) {
+          requestAnimationFrame(tick);
+        }
+      }
+      tick();
+    }
+
+    // =======================
+    // UI LOGIC
+    // =======================
+    function initDropdown() {
+      els.modelMenu.innerHTML = "";
+      Object.keys(MODELS).forEach((key) => {
+        const m = MODELS[key];
+        const div = document.createElement("div");
+        div.className = `model-item ${key === state.currentModelKey ? "selected" : ""}`;
+        div.innerHTML = `<div class="model-item-title">${m.name}</div><div class="model-item-desc">${m.desc}</div>`;
+        div.onclick = () => changeModel(key);
+        els.modelMenu.appendChild(div);
+      });
+    }
+
+    function changeModel(key) {
+      state.currentModelKey = key;
+      const m = MODELS[key];
+      els.modelNameDisplay.textContent = m.name;
+      els.modelMenu.classList.remove("active");
+      initDropdown();
+      if (m.isImageGen) {
+        els.input.placeholder = "Gambarkan sesuatu...";
+        els.attachBtn.style.display = "none";
+        clearImage();
+      } else {
+        els.input.placeholder = "Ketik pesan...";
+        els.attachBtn.style.display = "flex";
+      }
+    }
+
+    els.modelTrigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      els.modelMenu.classList.toggle("active");
+    });
+    document.addEventListener("click", (e) => {
+      if (!els.modelTrigger.contains(e.target)) els.modelMenu.classList.remove("active");
+    });
+
+    els.attachBtn.addEventListener("click", () => els.fileInput.click());
+    els.fileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        state.imageBase64 = ev.target.result.split(",")[1];
+        els.previewImg.src = ev.target.result;
+        els.previewArea.style.display = "flex";
+        checkInput();
+      };
+      reader.readAsDataURL(file);
+    });
+    els.clearImgBtn.addEventListener("click", clearImage);
+    function clearImage() {
+      state.imageBase64 = null;
+      els.fileInput.value = "";
+      els.previewArea.style.display = "none";
+      checkInput();
+    }
+
+    function checkInput() {
+      if (state.isGenerating) return;
+      const txt = els.input.value.trim();
+      els.actionBtn.disabled = (txt === "" && !state.imageBase64);
+      els.input.style.height = "auto";
+      els.input.style.height = Math.min(els.input.scrollHeight, 150) + "px";
+    }
+
+    els.input.addEventListener("input", checkInput);
+    els.input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        if (!els.actionBtn.disabled) handleAction();
+      }
+    });
+    els.actionBtn.addEventListener("click", handleAction);
+
+    function handleAction() {
+      if (state.isGenerating) {
+        if (state.abortController) {
+          state.abortController.abort();
+          state.abortController = null;
+          showToast("Berhenti.");
+        }
+        setGeneratingState(false);
+      } else {
+        sendMessage();
+      }
+    }
+
+    // =======================
+    // MESSAGE HANDLER
+    // =======================
+    function addMessageBubble(text, type, options = {}) {
+      const { isImage = false, modelKey = null, imageBase64 = null } = options;
+      const effectiveModelKey = modelKey || state.currentModelKey;
+
+      const row = document.createElement("div");
+      row.className = `msg-row ${type}`;
+
+      const avatar = document.createElement("div");
+      avatar.className = `msg-avatar ${type}`;
+      
+      if (type === "user") {
+        avatar.innerHTML = '<span class="material-icons-round" style="font-size:18px;">person</span>';
+      } else {
+        avatar.innerHTML = `<img src="assets/img/logo2.png" alt="AI">`;
+      }
+
+      const bubble = document.createElement("div");
+      bubble.className = "msg-bubble";
+
+      if (type === "ai") {
+        const tag = document.createElement("div");
+        tag.className = "model-tag";
+        tag.textContent = MODELS[effectiveModelKey].name;
+        bubble.appendChild(tag);
+      }
+
+      const content = document.createElement("div");
+      content.className = "msg-content";
+
+      if (isImage) {
+        content.innerHTML = text;
+      } else if (type === "ai") {
+        content.innerHTML = renderMarkdownAdvanced(text);
+      } else {
+        // MENAMPILKAN GAMBAR PENGGUNA DI BUBBLE
+        if (type === "user" && imageBase64) {
+          const img = document.createElement("img");
+          img.src = `data:image/jpeg;base64,${imageBase64}`;
+          img.style = "max-width:140px; border-radius:12px; margin-bottom:8px; display:block; border:1px solid rgba(0,0,0,0.1);";
+          content.appendChild(img);
+        }
+        const p = document.createElement("div");
+        p.innerHTML = escapeHtml(text).replace(/\n/g, "<br>");
+        content.appendChild(p);
+      }
+
+      bubble.appendChild(content);
+      row.appendChild(avatar);
+      row.appendChild(bubble);
+      els.msgs.appendChild(row);
+      scrollToBottom();
+      return { row, content };
+    }
+
+    function addThinkingBubble(modelKey) {
+      const row = document.createElement("div");
+      row.className = "msg-row ai";
+      const avatar = document.createElement("div");
+      avatar.className = "msg-avatar ai";
+      avatar.innerHTML = `<img src="assets/img/logo2.png" alt="AI">`;
+
+      const bubble = document.createElement("div");
+      bubble.className = "msg-bubble";
+
+      const tag = document.createElement("div");
+      tag.className = "model-tag";
+      tag.textContent = MODELS[modelKey].name;
+      bubble.appendChild(tag);
+
+      const wrap = document.createElement("div");
+      wrap.className = "thinking-wrapper";
+      wrap.innerHTML = `<div class="thinking-spinner"></div><span style="font-size:13px;color:#666;">Sedang berpikir...</span>`;
+
+      bubble.appendChild(wrap);
+      row.appendChild(avatar);
+      row.appendChild(bubble);
+      els.msgs.appendChild(row);
+      scrollToBottom();
+      return row;
+    }
+
+    // =======================
+    // CORE SEND LOGIC
+    // =======================
+    async function sendMessage() {
+      const text = els.input.value.trim();
+      const model = MODELS[state.currentModelKey];
+
+      if (!text && !state.imageBase64) return;
+      els.welcome.style.display = "none";
+
+      const currentImgData = state.imageBase64;
+
+      // Add user bubble with image
+      addMessageBubble(text, "user", { imageBase64: currentImgData });
+
+      const prompt = text;
+      els.input.value = "";
+      clearImage();
+
+      const modelKeyNow = state.currentModelKey;
+      const thinkingRow = addThinkingBubble(modelKeyNow);
+      
+      state.abortController = new AbortController();
+      const signal = state.abortController.signal;
+
+      setGeneratingState(true);
+
+      try {
+        if (model.isImageGen) {
+          await handleImageGen(prompt, model, signal);
+        } else if (model.api === "moraai") {
+          const reply = await requestOpenRouter(prompt, currentImgData, modelKeyNow, model, signal);
+          thinkingRow.remove();
+          // Type animation logic
+          const { content } = addMessageBubble("", "ai", { modelKey: modelKeyNow });
+          smoothMarkdownType(content, reply);
+          
+          state.chatHistory.push({ role: "user", text: prompt });
+          state.chatHistory.push({ role: "ai", text: reply });
+        } else {
+          const reply = await requestGemini(prompt, currentImgData, modelKeyNow, model, signal);
+          thinkingRow.remove();
+          // Type animation logic
+          const { content } = addMessageBubble("", "ai", { modelKey: modelKeyNow });
+          smoothMarkdownType(content, reply);
+          
+          state.chatHistory.push({ role: "user", text: prompt });
+          state.chatHistory.push({ role: "ai", text: reply });
+        }
+      } catch (err) {
+        thinkingRow.remove();
+        if (err.name !== 'AbortError') {
+          addMessageBubble(`Error: ${err.message}`, "ai", { modelKey: modelKeyNow });
+        }
+      } finally {
+        setGeneratingState(false);
+        state.abortController = null;
+      }
+    }
+
+    // =======================
+    // API CALLS
+    // =======================
+    async function requestGemini(prompt, imgBase64, modelKey, model, signal) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model.geminiModel || 'gemini-1.5-flash'}:generateContent?key=${GOOGLE_API_KEY}`;
+      const parts = [];
+      if (imgBase64) parts.push({ inlineData: { mimeType: "image/jpeg", data: imgBase64 } });
+      parts.push({ text: prompt });
+
+      const history = state.chatHistory.map((h) => ({
+        role: h.role === "ai" ? "model" : "user",
+        parts: [{ text: h.text }],
+      }));
+
+      let sysPrompt = SYSTEM_PROMPT_15;
+      if (modelKey === "deepforest-2") sysPrompt = SYSTEM_PROMPT_2;
+
+      const res = await fetch(url, {
+        method: "POST",
+        signal: signal,
+        body: JSON.stringify({
+          contents: [...history, { role: "user", parts }],
+          systemInstruction: { parts: [{ text: sysPrompt }] },
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 2048,
+            topP: 0.9
+          }
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error("Gemini API Error");
+      return data.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("\n") || "";
+    }
+
+    async function requestOpenRouter(prompt, imgBase64, modelKey, model, signal) {
+      let sysPrompt = SYSTEM_PROMPT_15;
+      if (modelKey === "dfp-1") sysPrompt = SYSTEM_PROMPT_DFP;
+      else if (modelKey === "deepforest-2") sysPrompt = SYSTEM_PROMPT_2;
+
+      const msgs = [{ role: "system", content: sysPrompt }];
+      state.chatHistory.forEach((h) => msgs.push({ role: h.role === "ai" ? "assistant" : "user", content: h.text }));
+      
+      const userContent = [{ type: "text", text: prompt }];
+      if (imgBase64) userContent.push({ type: "image_url", image_url: { url: `data:image/jpeg;base64,${imgBase64}` } });
+      msgs.push({ role: "user", content: userContent });
+
+      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        signal: signal,
+        headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: model.openrouterModel,
+          messages: msgs,
+          max_tokens: 2048,
+          temperature: 0.7,
+          top_p: 0.9
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error("OpenRouter Error");
+      return data.choices[0].message.content;
+    }
+
+    async function handleImageGen(prompt, model, signal) {
+      throw new Error("Mohon Maaf! saat ini model AI ini sedang terjadi perbaikan dan pelatihan ulang, Mohon ditunggu informasi lebih lanjutnya.");
+    }
+
+    // Init
+    setGreeting();
+    initDropdown();
+    checkInput();
+  </script>
+</body>
+</html>
