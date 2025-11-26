@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deepforest - Masuk & Daftar</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@100..900&display=swap');
+
+        :root {
+            --primary-green: #059669;
+            --dark-green: #065F46;
+            --brown-color: #78350F;
+        }
+
+        body {
+            font-family: 'Raleway', sans-serif;
+            background:
+                radial-gradient(circle at top, #ecfdf5 0, #ffffff 45%, #d1fae5 100%);
+            color: #1F2937;
+        }
+
+        /* ========= ANIMASI GLOBAL ========= */
+        [data-animate] {
+            opacity: 0;
+            transform: translateY(18px);
+            transition:
+                opacity 0.6s ease-out,
+                transform 0.6s ease-out;
+        }
+        [data-animate].animate-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .float-soft {
+            animation: floatSoft 7s ease-in-out infinite;
+        }
+        @keyframes floatSoft {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* ========= BUTTON UTAMA ========= */
+        .btn-primary {
+            background-color: var(--primary-green);
+            transition:
+                background-color 0.25s,
+                transform 0.15s,
+                box-shadow 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: var(--dark-green);
+            transform: translateY(-1px);
+            box-shadow: 0 12px 25px -12px rgba(5, 150, 105, 0.6);
+        }
+
+        /* ========= TOGGLE TAB ========= */
+        .toggle-tab {
+            transition: all 0.25s;
+            cursor: pointer;
+        }
+        .active-tab {
+            color: var(--dark-green);
+            font-weight: 700;
+            background-color: #ecfdf5;
+            box-shadow: inset 0 0 0 1px rgba(5, 150, 105, 0.15);
+        }
+
+        /* Input focus */
+        input:focus {
+            border-color: var(--primary-green) !important;
+            box-shadow: 0 0 0 1px var(--primary-green) !important;
+            outline: none;
+        }
+
+        /* Status box transition */
+        #status-message {
+            transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+        }
+    </style>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="min-h-screen flex items-center justify-center px-4 py-8">
+
+    <!-- WRAPPER -->
+    <div class="w-full max-w-5xl mx-auto grid md:grid-cols-[1.1fr,1fr] gap-8 items-stretch" data-animate>
+
+        <!-- PANEL BRAND (KIRI, HIDDEN DI MOBILE) -->
+        <section class="hidden md:flex flex-col justify-between rounded-3xl bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-900 p-8 text-emerald-50 shadow-2xl relative overflow-hidden">
+            <div class="absolute -top-16 -right-10 h-40 w-40 rounded-full bg-emerald-500/30 blur-3xl float-soft"></div>
+            <div class="absolute -bottom-20 -left-16 h-48 w-48 rounded-full bg-emerald-300/25 blur-3xl"></div>
+
+            <div class="relative">
+                <a href="index.html" class="inline-flex items-center space-x-3 mb-6">
+                    <img src="assets/img/logo1-white.png" alt="Deepforest Logo" class="h-13 w-auto drop-shadow-lg">
+                </a>
+                <h1 class="text-3xl font-extrabold tracking-tight mb-3">
+                    Masuk ke Deepforest
+                </h1>
+                <p class="text-sm text-emerald-100/90 leading-relaxed mb-6">
+                    Satu akun untuk mengelola dashboard, eksperimen, dan integrasi
+                    Deepforest.
+                </p>
+
+                <ul class="space-y-3 text-sm">
+                    <li class="flex items-start gap-3">
+                        <span class="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/20">
+                            <i class="fas fa-bolt text-xs"></i>
+                        </span>
+                        <span>
+                            <strong class="block text-emerald-50">Latensi rendah</strong>
+                            <span class="text-emerald-100/90">Model Canggih siap untuk produksi dan eksperimen cepat.</span>
+                        </span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/20">
+                            <i class="fas fa-lock text-xs"></i>
+                        </span>
+                        <span>
+                            <strong class="block text-emerald-50">Keamanan terjaga</strong>
+                            <span class="text-emerald-100/90">Kunci API terenkripsi dan kontrol akses berbasis peran.</span>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="relative mt-8 text-xs text-emerald-100/80">
+                <span class="inline-flex items-center gap-2">
+                    <i class="fas fa-circle-notch animate-spin text-[10px]"></i>
+                    Deepforest Status • <span class="font-semibold">Aktif</span>
+                </span>
+            </div>
+        </section>
+
+        <!-- CARD AUTH (KANAN / FULL DI MOBILE) -->
+        <section class="w-full bg-white rounded-3xl shadow-xl p-6 sm:p-8 border border-emerald-50/80" data-animate>
+            <!-- Logo mobile -->
+            <div class="flex items-center justify-between mb-6 md:mb-8">
+                <div class="flex items-center gap-3">
+                    <a href="index.html" class="md:hidden inline-flex items-center space-x-2">
+                        <img src="assets/img/logo1.png" alt="Deepforest Logo" class="h-10 w-auto">
+                    </a>
+                    <div class="hidden md:block">
+                        <p class="text-xs font-semibold tracking-[0.2em] text-emerald-500 uppercase">
+                            Akun Deepforest
+                        </p>
+                        <p class="text-xs text-gray-400">Masuk atau buat akun baru</p>
+                    </div>
+                </div>
+                <a href="landing.html"
+                   class="hidden md:inline-flex items-center gap-1 text-xs text-gray-400 hover:text-emerald-600 transition">
+                    <i class="fas fa-arrow-left text-[10px]"></i> Kembali ke beranda
+                </a>
+            </div>
+
+            <!-- Toggle tab -->
+            <div class="flex bg-gray-100 rounded-2xl p-1 mb-6">
+                <button id="tab-login"
+                        class="toggle-tab flex-1 text-center py-2.5 text-sm sm:text-base text-gray-500 rounded-xl active-tab">
+                    Masuk
+                </button>
+                <button id="tab-register"
+                        class="toggle-tab flex-1 text-center py-2.5 text-sm sm:text-base text-gray-500 rounded-xl">
+                    Daftar
+                </button>
+            </div>
+
+            <!-- Status Message -->
+            <div id="status-message"
+                 class="hidden p-3 mb-4 rounded-lg text-sm"
+                 role="alert"></div>
+
+            <!-- FORMS -->
+            <div id="auth-forms">
+                <!-- Login -->
+                <form id="login-form" class="space-y-5">
+                    <div>
+                        <label for="login-email"
+                               class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-[0.16em]">
+                            Email
+                        </label>
+                        <input type="email" id="login-email"
+                               class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm"
+                               placeholder="nama@email.com" required>
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label for="login-password"
+                                   class="block text-xs font-semibold text-gray-600 uppercase tracking-[0.16em]">
+                                Kata sandi
+                            </label>
+                            <a href="#"
+                               class="text-[11px] text-emerald-600 hover:text-emerald-700 font-medium">
+                                Lupa kata sandi?
+                            </a>
+                        </div>
+                        <input type="password" id="login-password"
+                               class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm"
+                               placeholder="Minimal 6 karakter" required>
+                    </div>
+
+                    <button type="submit" id="login-button"
+                            class="btn-primary w-full text-white font-semibold py-2.5 rounded-xl flex items-center justify-center text-sm">
+                        <i class="fas fa-sign-in-alt mr-2 text-xs"></i>
+                        Masuk ke Deepforest
+                    </button>
+
+                    <p class="text-center text-xs text-gray-500">
+                        Belum punya akun?
+                        <button type="button"
+                                class="text-emerald-600 hover:text-emerald-800 font-semibold"
+                                onclick="document.getElementById('tab-register').click()">
+                            Daftar sekarang
+                        </button>
+                    </p>
+                </form>
+
+                <!-- Register -->
+                <form id="register-form" class="space-y-5 hidden">
+                    <div>
+                        <label for="register-email"
+                               class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-[0.16em]">
+                            Email
+                        </label>
+                        <input type="email" id="register-email"
+                               class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm"
+                               placeholder="nama@email.com" required>
+                    </div>
+                    <div>
+                        <label for="register-password"
+                               class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-[0.16em]">
+                            Kata sandi
+                        </label>
+                        <input type="password" id="register-password"
+                               class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm"
+                               placeholder="Minimal 6 karakter" required>
+                    </div>
+                    <div>
+                        <label for="register-confirm-password"
+                               class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-[0.16em]">
+                            Konfirmasi kata sandi
+                        </label>
+                        <input type="password" id="register-confirm-password"
+                               class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm"
+                               placeholder="Ulangi kata sandi" required>
+                    </div>
+
+                    <button type="submit" id="register-button"
+                            class="btn-primary w-full text-white font-semibold py-2.5 rounded-xl flex items-center justify-center text-sm">
+                        <i class="fas fa-user-plus mr-2 text-xs"></i>
+                        Daftar Akun Baru
+                    </button>
+
+                    <p class="text-center text-[11px] text-gray-500">
+                        Dengan mendaftar, Anda menyetujui
+                        <a href="terms.html" class="text-emerald-600 hover:text-emerald-800 underline">
+                            Syarat & Ketentuan
+                        </a>.
+                    </p>
+                </form>
+
+                <!-- Divider -->
+                <div class="relative flex items-center py-5">
+                    <div class="flex-grow border-t border-gray-200"></div>
+                    <span class="flex-shrink mx-4 text-gray-400 text-xs">ATAU</span>
+                    <div class="flex-grow border-t border-gray-200"></div>
+                </div>
+
+                <!-- Guest -->
+                <button id="guest-button"
+                        class="w-full bg-gray-50 text-gray-700 font-semibold py-2.5 rounded-xl border border-gray-200 hover:bg-gray-100 transition duration-150 flex items-center justify-center text-sm">
+                    <i class="fas fa-ghost mr-2 text-xs"></i>
+                    Lanjutkan sebagai Tamu
+                </button>
+            </div>
+        </section>
+    </div>
+
+<script type="module">
+  // =========================
+  // IMPORT FIREBASE
+  // =========================
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+  import {
+    getAuth,
+    signInAnonymously,
+    onAuthStateChanged,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword
+  } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+  // =========================
+  // KONFIGURASI FIREBASE
+  // (INI PUNYA KAMU, DARI SCREENSHOT)
+  // =========================
+  const firebaseConfig = {
+    apiKey: "AIzaSyD0b0V0KbUahasbtcJF_F0hTIR6yeti54g",
+    authDomain: "adexsoft-web.firebaseapp.com",
+    projectId: "adexsoft-web",
+    storageBucket: "adexsoft-web.firebasestorage.app",
+    messagingSenderId: "479632502802",
+    appId: "1:479632502802:web:c5f1d7322529fb303d28cb",
+    measurementId: "G-MG04K5HW5X"
+  };
+
+  // INIT
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const auth = getAuth(app);
+
+  // =========================
+  // DOM ELEMENT
+  // =========================
+  const statusMessage   = document.getElementById('status-message');
+  const loginForm       = document.getElementById('login-form');
+  const registerForm    = document.getElementById('register-form');
+  const tabLogin        = document.getElementById('tab-login');
+  const tabRegister     = document.getElementById('tab-register');
+  const guestButton     = document.getElementById('guest-button');
+
+  // =========================
+  // HELPER STATUS TOAST MINI
+  // =========================
+  function resetStatusClass() {
+    statusMessage.className = "p-3 mb-4 rounded-lg text-sm";
+  }
+
+  function showStatus(message, type = 'success') {
+    resetStatusClass();
+    statusMessage.textContent = message;
+    statusMessage.classList.remove('hidden');
+
+    if (type === 'success') {
+      statusMessage.classList.add('bg-green-100', 'text-green-800');
+    } else if (type === 'error') {
+      statusMessage.classList.add('bg-red-100', 'text-red-800');
+    } else {
+      statusMessage.classList.add('bg-blue-100', 'text-blue-800');
+    }
+  }
+
+  // =========================
+  // SWITCH TAB LOGIN / REGISTER
+  // =========================
+  function switchForm(formToShow) {
+    loginForm.classList.add('hidden');
+    registerForm.classList.add('hidden');
+    tabLogin.classList.remove('active-tab');
+    tabRegister.classList.remove('active-tab');
+    statusMessage.classList.add('hidden');
+
+    if (formToShow === 'login') {
+      loginForm.classList.remove('hidden');
+      tabLogin.classList.add('active-tab');
+    } else {
+      registerForm.classList.remove('hidden');
+      tabRegister.classList.add('active-tab');
+    }
+  }
+
+  tabLogin.addEventListener('click', () => switchForm('login'));
+  tabRegister.addEventListener('click', () => switchForm('register'));
+
+  // =========================
+  // AUTH STATE LISTENER
+  // =========================
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const isGuest = user.isAnonymous;
+      const label = isGuest ? "tamu" : (user.email || "pengguna");
+
+      showStatus(`Berhasil masuk sebagai ${label}. Mengalihkan ke Deepforest Chat...`, 'success');
+
+      // redirect halus
+      setTimeout(() => {
+        window.location.href = "chatai.html";   // ganti ke nama file chat kamu
+      }, 900);
+    } else {
+      showStatus("Silakan masuk, daftar, atau lanjut sebagai tamu.", 'info');
+    }
+  });
+
+  // =========================
+  // FORM LOGIN
+  // =========================
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email    = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      showStatus("Berhasil masuk. Mengalihkan...", 'success');
+    } catch (error) {
+      console.error("Login failed:", error);
+      let msg = "Gagal masuk. Periksa email dan kata sandi.";
+
+      if (error.code === "auth/user-not-found") {
+        msg = "Akun tidak ditemukan. Coba daftar terlebih dahulu.";
+      } else if (error.code === "auth/wrong-password") {
+        msg = "Kata sandi salah.";
+      } else if (error.code === "auth/invalid-email") {
+        msg = "Format email tidak valid.";
+      }
+
+      showStatus(msg, 'error');
+    }
+  });
+
+  // =========================
+  // FORM REGISTER
+  // =========================
+  registerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email           = document.getElementById('register-email').value.trim();
+    const password        = document.getElementById('register-password').value;
+    const confirmPassword = document.getElementById('register-confirm-password').value;
+
+    if (password !== confirmPassword) {
+      showStatus("Kata sandi dan konfirmasi tidak cocok.", 'error');
+      return;
+    }
+
+    if (password.length < 6) {
+      showStatus("Kata sandi harus minimal 6 karakter.", 'error');
+      return;
+    }
+
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      showStatus("Pendaftaran berhasil. Anda sudah masuk.", 'success');
+    } catch (error) {
+      console.error("Registration failed:", error);
+      let msg = "Gagal mendaftar.";
+
+      if (error.code === "auth/email-already-in-use") {
+        msg = "Email sudah digunakan. Coba masuk.";
+      } else if (error.code === "auth/invalid-email") {
+        msg = "Format email tidak valid.";
+      } else if (error.code === "auth/weak-password") {
+        msg = "Kata sandi terlalu lemah.";
+      }
+
+      showStatus(msg, 'error');
+    }
+  });
+
+  // =========================
+  // LOGIN SEBAGAI TAMU
+  // =========================
+  guestButton.addEventListener('click', async () => {
+    try {
+      await signInAnonymously(auth);
+      showStatus("Masuk sebagai tamu. Mengalihkan...", 'success');
+    } catch (error) {
+      console.error("Guest sign in failed:", error);
+      showStatus("Gagal masuk sebagai tamu. Coba lagi.", 'error');
+    }
+  });
+
+  // =========================
+  // ANIMASI ENTRY CARD
+  // (yang kamu punya sebelumnya, dipindah ke sini biar tidak bentrok)
+  // =========================
+  document.addEventListener('DOMContentLoaded', () => {
+    const animated = document.querySelectorAll('[data-animate]');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    animated.forEach(el => observer.observe(el));
+  });
+
+  // Default tampilan
+  switchForm('login');
+</script>
+</body>
+</html>
